@@ -30,7 +30,7 @@ function ConfidentialList() {
     excelData[0]?.data.filter(
       (s) => s.status?.toLowerCase().trim() === "re-appear"
     ) || [];
-    
+
   const regularStudentsCount = regularStudents.length;
 
   // Create chunks of students, each containing up to `studentsPerPage` students
@@ -56,7 +56,9 @@ function ConfidentialList() {
                 </div>
                 <div className="titleSection">
                   <h1 className="universityTitle">Khyber Medical University</h1>
-                  <p className="programTitle">Regional Exam Cell - {excelData[0]?.regionalExamCell}</p>
+                  <p className="programTitle">
+                    Regional Exam Cell - {excelData[0]?.regionalExamCell}
+                  </p>
                   <p className="semesterTitle"> Confidential List with Pic</p>
                 </div>
                 <div className="emptySpace" style={{ width: "100px" }}></div>{" "}
@@ -81,7 +83,7 @@ function ConfidentialList() {
                 <p className="detailRow mb-1">
                   <span className="detailLabel">Institute :</span>
                   <span className="detailValue ms-1">
-                {excelData[0]?.instituteName || ""}
+                    {excelData[0]?.instituteName || ""}
                   </span>
                 </p>
               </div>
@@ -175,31 +177,8 @@ function ConfidentialList() {
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
           background-color: #fff;
           border-radius: 8px;
-        }
-
-        .headerSection {
-          border-bottom: 2px solid #000;
-          padding-bottom: 10px;
-          margin-bottom: 20px;
-        }
-
-        .kmuLogo {
-          height: 80px;
-          width: auto;
-          object-fit: contain;
-        }
-
-        .universityName {
-          font-size: 1.5rem;
-          font-weight: bold;
-        }
-
-        .sheetTitle {
-          font-size: 1.3rem;
-          font-weight: bold;
-          text-decoration: underline;
-        }
-
+        } 
+ 
         .courseDetails {
           font-size: 1.1rem;
           font-weight: bold;
@@ -211,13 +190,8 @@ function ConfidentialList() {
           align-items: baseline;
           font-size: 1.1rem;
           margin-bottom: 5px;
-        }
-
-        .detailLabel {
-          font-weight: bold;
-          min-width: 80px; /* Adjust as needed */
-        }
-
+        } 
+         
         .detailValue {
           font-style: italic;
           font-size: 15px;
@@ -228,30 +202,7 @@ function ConfidentialList() {
           width: 100%;
           border-collapse: collapse;
           margin-top: 20px;
-        }
-
-        .tableHeader {
-          background-color: #f8f9fa;
-        }
-
-        .tableHeaderCell {
-          vertical-align: middle;
-          text-align: center;
-          font-weight: bold;
-          border: 1px solid #000 !important;
-          padding: 8px;
-        }
-
-        .tableBody .tableRow:nth-child(even) {
-          background-color: #f2f2f2;
-        }
-
-        .tableCell {
-          border: 1px solid #000 !important;
-          padding: 8px;
-          text-align: center;
-          vertical-align: middle;
-        }
+        } 
  
       `}</style>
     </>

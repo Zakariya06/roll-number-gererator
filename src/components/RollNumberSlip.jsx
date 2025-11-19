@@ -13,6 +13,7 @@ import ConfidentialList from "./ConfidentialList";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import useExcelExport from "../hooks/useExcelExport";
+import ReappearStudentCount from "./ReappearStudentCount";
 
 export default function RollNumberSlip() {
   const { excelData, setExcelData, editableData, setEditableData } =
@@ -39,6 +40,8 @@ export default function RollNumberSlip() {
             ? `${excelData[0]?.instituteName || ""} Attendance Sheet.pdf`
             : target === "confidentialListContainer"
             ? `${excelData[0]?.instituteName || ""} Confidential List.pdf`
+            : target === "reappearStudentData"
+            ? `${excelData[0]?.instituteName || ""} Re-appear Data Students.pdf`
             : `${excelData[0]?.instituteName || ""} Roll Number.pdf`;
 
         handle = await window.showSaveFilePicker({
@@ -213,6 +216,12 @@ export default function RollNumberSlip() {
         </button>
         <button className="downloadButton" onClick={handleStationModal}>
           Download Students Ospe Station List
+        </button>
+        <button
+          className="downloadButton"
+          onClick={() => downloadPDF("reappearStudentData")}
+        >
+          Download Re-appear Data Students PDF
         </button>
         <button className="downloadButton clearDataButton" onClick={deleteData}>
           Clear
@@ -489,6 +498,9 @@ export default function RollNumberSlip() {
         <hr />
         <h4 className="mdHeading mt-5 text-center mb-3">Confidential List</h4>
         <ConfidentialList />
+
+        <hr />
+        <ReappearStudentCount />
       </div>
 
       <Modal show={pdfLoading} size="sm" centered>

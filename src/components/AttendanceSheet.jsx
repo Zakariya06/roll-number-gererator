@@ -88,7 +88,10 @@ function AttendanceSheet() {
                           Khyber Medical University
                         </h1>
                         <p className="programTitle">
-                          Regional Exam Cell - {excelData[0]?.regionalExamCell}
+                          Regional - {excelData[0]?.regionalExamCell}
+                        </p>
+                        <p className="bsnText mb-0">
+                          {editableData.semesterTitle}
                         </p>
                         <p className="semesterTitle">ATTENDANCE SHEET</p>
                       </div>
@@ -97,40 +100,50 @@ function AttendanceSheet() {
                         style={{ width: "100px" }}
                       ></div>{" "}
                     </div>
-                    <div className="bsnInfo text-center mb-4">
-                      <p className="bsnText mb-0">
-                        {editableData.semesterTitle}
-                      </p>
-                    </div>
                     <div className="courseDetails mb-4">
                       <p className="detailRow mb-1">
-                        <span className="detailLabel">Exam Centre :</span>
+                        <span
+                          className="detailLabel"
+                          style={{ minWidth: "auto" }}
+                        >
+                          Exam Centre :
+                        </span>
                         <span className="detailValue ms-2">
                           {editableData.examCenter}
                         </span>
                       </p>
                       <p className="detailRow mb-1">
-                        <span className="detailLabel">Institute :</span>
+                        <span
+                          className="detailLabel"
+                          style={{ minWidth: "auto" }}
+                        >
+                          Institute :
+                        </span>
                         <span className="detailValue ms-2">
                           {excelData[0]?.instituteName || ""}
                         </span>
                       </p>
                       <div className="d-flex align-items-center gap-4 justify-content-between">
                         <p className="detailRow  mb-1">
-                          <span className="detailLabel">Subject :</span>
                           <span
-                            className="detailValue ms-2 "
-                            style={{ width: "200px" }}
+                            className="detailLabel"
+                            style={{ minWidth: "auto" }}
                           >
-                            {subject}
+                            Subject :
                           </span>
+                          <span className="detailValue">{subject}</span>
                         </p>
 
                         <p className="detailRow  mb-1">
-                          <span className="detailLabel">Date :</span>
+                          <span
+                            className="detailLabel"
+                            style={{ minWidth: "auto" }}
+                          >
+                            Date :
+                          </span>
                           <span
                             className="detailValue ms-2 "
-                            style={{ width: "200px" }}
+                            style={{ width: "100px" }}
                           >
                             {editableData.subjects.find(
                               (sub) =>
@@ -258,117 +271,7 @@ function AttendanceSheet() {
           border-radius: 8px;
           padding-bottom: 3rem;
         }
-
-        .headerSection {
-          border-bottom: 2px solid #000;
-          padding-bottom: 10px;
-          margin-bottom: 20px;
-        }
-
-        .kmuLogo {
-          height: 80px;
-          width: auto;
-          object-fit: contain;
-        }
-
-        .universityTitle {
-          font-size: 1.5rem;
-          font-weight: bold;
-        }
-
-        .programTitle {
-          font-size: 1.2rem;
-          font-weight: normal;
-        }
-
-        .semesterTitle {
-          font-size: 1.3rem;
-          font-weight: bold;
-          text-decoration: underline;
-        }
-
-        .bsnInfo {
-          font-size: 1.1rem;
-          font-weight: bold;
-          margin-bottom: 20px;
-        }
-
-        .detailRow {
-          display: flex;
-          align-items: baseline;
-          font-size: 1.1rem;
-          margin-bottom: 5px;
-        }
-
-        .detailLabel {
-          font-weight: bold;
-          min-width: 100px;
-        }
-
-        .detailValue {
-          font-style: italic;
-        }
-
-        .attendanceTable {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-        }
-
-        .tableHeader {
-          background-color: #f8f9fa;
-        }
-
-        .tableHeaderCell {
-          vertical-align: middle;
-          text-align: center;
-          font-weight: bold;
-          border: 1px solid #000 !important;
-          padding: 8px;
-        }
-
-        .tableBody .tableRow:nth-child(even) {
-          background-color: #f2f2f2;
-        }
-
-        .tableCell {
-          border: 1px solid #000 !important;
-          padding: 8px;
-          text-align: left;
-          vertical-align: middle;
-        }
-
-        .signatureCell {
-          min-width: 150px;
-          text-align: left;
-        }
-
-        .footerSection {
-          padding-top: 20px;
-          border-top: 2px solid #000;
-        }
-
-        .signatureBlock {
-          flex: 1;
-          padding: 0 20px;
-        }
-
-        .signatureLabel {
-          font-weight: bold;
-          font-size: 1.1rem;
-        }
-
-        .signatureLine {
-          border-bottom: 1px solid #000;
-          margin-top: 30px;
-          width: 80%;
-        }
-
-        .pageInfo {
-          font-weight: bold;
-          font-size: 1rem;
-          color: #666;
-        }
+ 
       `}</style>
     </>
   );
