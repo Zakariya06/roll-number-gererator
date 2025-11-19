@@ -541,7 +541,7 @@ const DefaultSlip = ({
         </div>
       </div>
 
-      <div className="mb-5 d-flex align-items-center justify-content-center gap-4">
+      <div className="mb-5 mt-5 d-flex align-items-center justify-content-center gap-4">
         <button
           className=" downloadButton"
           onClick={() => setFileUploaded(false)}

@@ -146,58 +146,43 @@ export default function ExcelUploader() {
   return (
     <>
       <div className="appWrapper">
-        {!fileUploaded ? (
-          <>
-            <header className="navBar">
-              <Container>
-                <img src={logo} alt="KMU " className="kmuLogo" />
-              </Container>
-            </header>
-            <div className="uploaderWrapper">
-              <Container className="uploadContainer">
-                <Row className="justifyContentCenter">
-                  <Col md={8} className="mx-auto">
-                    <div
-                      {...getRootProps()}
-                      className={`dropzone ${
-                        isDragActive ? "dropzoneActive" : ""
-                      }`}
-                    >
-                      <input {...getInputProps()} />
-                      <div className="dropzoneInner text-center">
-                        <p className="dropTitle">
-                          Drag & drop your Excel file here
-                        </p>
-                        <p className="dropSubtitle">or click to select file</p>
-                      </div>
-                    </div>
-                    {fileName && (
-                      <p className="fileName mt-3 text-center">
-                        📄 Uploaded: {fileName}
-                      </p>
-                    )}
-                  </Col>
-                </Row>
+        <Container className="uploadContainer">
+          <Row className="justifyContentCenter">
+            <Col md={8} className="mx-auto">
+              <div
+                {...getRootProps()}
+                className={`dropzone ${isDragActive ? "dropzoneActive" : ""}`}
+              >
+                <input {...getInputProps()} />
+                <div className="dropzoneInner text-center">
+                  <p className="dropTitle">Drag & drop your Excel file here</p>
+                  <p className="dropSubtitle">or click to select file</p>
+                </div>
+              </div>
+              {fileName && (
+                <p className="fileName mt-3 text-center">
+                  📄 Uploaded: {fileName}
+                </p>
+              )}
+            </Col>
+          </Row>
 
-                {/* Loading Spinner Modal */}
-                <Modal show={pdfLoading} centered size="sm">
-                  <div className="text-center p-4">
-                    <Spinner animation="border" variant="danger" />
-                    <p className="mt-3">Processing...</p>
-                  </div>
-                </Modal>
-              </Container>
+          {/* Loading Spinner Modal */}
+          <Modal show={pdfLoading} centered size="sm">
+            <div className="text-center p-4">
+              <Spinner animation="border" variant="danger" />
+              <p className="mt-3">Processing...</p>
             </div>
-          </>
-        ) : (
-          <DefaultSlip
-            rollNumLength={rollNumLength}
-            setRollNumLength={setRollNumLength}
-            rollNumberFocus={rollNumberFocus}
-            setRollNumberFocus={setRollNumberFocus}
-            setFileUploaded={setFileUploaded}
-          />
-        )}
+          </Modal>
+        </Container>
+
+        <DefaultSlip
+          rollNumLength={rollNumLength}
+          setRollNumLength={setRollNumLength}
+          rollNumberFocus={rollNumberFocus}
+          setRollNumberFocus={setRollNumberFocus}
+          setFileUploaded={setFileUploaded}
+        />
       </div>
     </>
   );

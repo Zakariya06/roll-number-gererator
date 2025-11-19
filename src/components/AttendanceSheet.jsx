@@ -115,15 +115,31 @@ function AttendanceSheet() {
                           {excelData[0]?.instituteName || ""}
                         </span>
                       </p>
-                      <p className="detailRow  mb-1">
-                        <span className="detailLabel">Subject :</span>
-                        <span
-                          className="detailValue ms-2 "
-                          style={{ width: "200px" }}
-                        >
-                          {subject}
-                        </span>
-                      </p>
+                      <div className="d-flex align-items-center gap-4 justify-content-between">
+                        <p className="detailRow  mb-1">
+                          <span className="detailLabel">Subject :</span>
+                          <span
+                            className="detailValue ms-2 "
+                            style={{ width: "200px" }}
+                          >
+                            {subject}
+                          </span>
+                        </p>
+
+                        <p className="detailRow  mb-1">
+                          <span className="detailLabel">Date :</span>
+                          <span
+                            className="detailValue ms-2 "
+                            style={{ width: "200px" }}
+                          >
+                            {editableData.subjects.find(
+                              (sub) =>
+                                sub.subject.toLowerCase().trim() ===
+                                subject.toLowerCase().trim()
+                            )?.date || "6-Jan-25"}
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </>
                 )}
