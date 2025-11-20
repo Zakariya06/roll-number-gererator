@@ -44,7 +44,7 @@ const DefaultSlip = ({
         id: `subject-${index}-${Date.now()}`,
         subject: subject,
         date: "dd/mm/yy",
-        timing: "hh:mm AM/PM to hh:mm AM/PM",
+        timing: "00:00 to 00:00",
       }));
 
       setEditableData((prev) => ({
@@ -104,8 +104,8 @@ const DefaultSlip = ({
     const newRow = {
       id: `new-${Date.now()}`,
       subject: "New Subject",
-      date: "dd/mm/yy",
-      timing: "hh:mm AM/PM to hh:mm AM/PM",
+      date: "dd/mm/yyyy",
+      timing: "00:00 to 00:00",
     };
     const updated = [...editableData.subjects, newRow];
     setEditableData({ ...editableData, subjects: updated });
@@ -458,7 +458,10 @@ const DefaultSlip = ({
                                   }
                                 />
                               </td>
-                              <td className="tableCell deleteRowCell">
+                              <td
+                                className="tableCell  deleteRowCell"
+                                style={{ position: "relative" }}
+                              >
                                 <input
                                   type="text"
                                   value={subject.timing}
@@ -477,6 +480,10 @@ const DefaultSlip = ({
                                     cursor: "pointer",
                                     color: "red",
                                     marginLeft: "8px",
+                                    position: "absolute",
+                                    right: "5px",
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
                                   }}
                                   title="Delete this subject"
                                 />

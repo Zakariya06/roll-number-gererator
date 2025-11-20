@@ -106,7 +106,9 @@ const StaticSlip = () => {
                     </div>
                     <div className="infoItem mt-2" style={{ flex: 1 }}>
                       <span className="infoLabel">Institute:</span>
-                      <span className="infoValue"></span>
+                      <span className="infoValue">
+                        {editableData.institute && editableData.institute}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -154,7 +156,7 @@ const StaticSlip = () => {
                     type="text"
                     className="examCenterValue"
                     value={editableData.examCenter}
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, border: "none" }}
                     disabled
                   />
                 </div>

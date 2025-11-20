@@ -14,7 +14,7 @@ export const SheetProvider = ({ children }) => {
     rollNumber: "0000001",
     registrationNo: "67890",
     institute: "KMU Institute Of Health Sciences Swat",
-    examCenter: "KMU Institute Of Health Sciences Swat",
+    examCenter: "Write Center Name Here",
     semesterTitle: "Write Exam Name Here",
     logoImagePath: null,
     subjects: [],

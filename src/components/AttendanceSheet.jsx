@@ -3,7 +3,7 @@ import { useSheetContext } from "../context/sheetData";
 import logo from "../assets/khyber_medical_university_logo.jpeg";
 import ihslogo from "../assets/kmu_ihs_logo.png";
 
-function AttendanceSheet() {
+function AttendanceSheet({ selectedAtStatus }) {
   const { excelData, editableData } = useSheetContext();
 
   // Define students per page
@@ -96,6 +96,11 @@ function AttendanceSheet() {
                           {editableData.semesterTitle}
                         </p>
                         <p className="semesterTitle">ATTENDANCE SHEET</p>
+                        {selectedAtStatus === "Paper Code" && (
+                          <p className="semesterTitle">
+                            Computer Base Examination
+                          </p>
+                        )}
                       </div>
                       <div
                         className="emptySpace"
@@ -176,7 +181,9 @@ function AttendanceSheet() {
                         <th className="tableHeaderCell" rowSpan="2">
                           Father Name
                         </th>
-                        <th className="tableHeaderCell">Paper Code</th>
+                        <th className="tableHeaderCell">
+                          {selectedAtStatus ? selectedAtStatus : " Paper Code"}
+                        </th>
                         <th className="tableHeaderCell">Signature</th>
                       </tr>
                     </thead>

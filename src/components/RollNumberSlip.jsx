@@ -25,6 +25,8 @@ export default function RollNumberSlip() {
   const [pdfGenereted, setPdfGenereted] = useState(false);
   const [stationModal, setStationModal] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
+  const [atStatus, setAtStatus] = useState(false);
+  const [selectedAtStatus, setSelectedAtStatus] = useState(null);
 
   const navigate = useNavigate();
 
@@ -202,10 +204,7 @@ export default function RollNumberSlip() {
         >
           Download Roll No PDF
         </button>
-        <button
-          className="downloadButton"
-          onClick={() => downloadPDF("attendanceSheetContainer")}
-        >
+        <button className="downloadButton" onClick={() => setAtStatus(true)}>
           Download Attendance Sheet PDF
         </button>
         <button
@@ -525,7 +524,7 @@ export default function RollNumberSlip() {
 
         <hr />
         <h4 className="mdHeading mt-5 text-center mb-3">Attendance Sheets</h4>
-        <AttendanceSheet />
+        <AttendanceSheet selectedAtStatus={selectedAtStatus} />
 
         <hr />
         <h4 className="mdHeading mt-5 text-center mb-3">Confidential List</h4>
@@ -704,6 +703,45 @@ export default function RollNumberSlip() {
             </p>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        show={atStatus}
+        size="md"
+        centered
+        onHide={() => setAtStatus(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Exam Format</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="px-3 py-2">
+            <div className="mb-4">
+              <label htmlFor="stationSelect" className="form-label fw-semibold">
+                Select Exam Format
+              </label>
+              <select
+                className="form-select form-select-lg"
+                id="stationSelect"
+                value={selectedAtStatus || ""}
+                onChange={(e) => setSelectedAtStatus(e.target.value)}
+              >
+                <option value="" defaultChecked>
+                  Choose a Status...
+                </option>
+                <option value="Circuit">Online</option>
+                <option value="Paper Code">Physical</option>
+              </select>
+            </div>
+
+            <button
+              className="downloadButton"
+              onClick={() => downloadPDF("attendanceSheetContainer")}
+            >
+              Download Attendance Sheet PDF
+            </button>
+          </div>
+        </Modal.Body>
       </Modal>
     </>
   );
