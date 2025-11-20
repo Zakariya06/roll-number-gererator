@@ -13,8 +13,8 @@ function ReappearStudentCount() {
     excelData[0].data.forEach((student) => {
       if (student.status?.toLowerCase().trim() === "re-appear") {
         student.subjects?.forEach((subject) => {
-          if (subject && subject.trim() !== "") {
-            const sub = subject.trim();
+          if (subject.subject && subject.subject.trim() !== "") {
+            const sub = subject.subject.trim();
             reappearSubjects[sub] = (reappearSubjects[sub] || 0) + 1;
           }
         });
@@ -38,6 +38,9 @@ function ReappearStudentCount() {
               <span className="detailLabel" style={{ minWidth: "auto" }}>
                 {excelData[0]?.instituteName || ""}
               </span>
+            </p>
+            <p className="detailRow justify-content-center gap-0 mb-1">
+              Re-Appear Students Data
             </p>
           </div>
           {/* Re-appear Subjects Count Table */}

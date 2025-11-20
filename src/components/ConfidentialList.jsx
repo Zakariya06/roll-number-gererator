@@ -97,8 +97,8 @@ function ConfidentialList() {
             <table className="confidentialTable table table-bordered">
               <thead className="tableHeader">
                 <tr>
-                  <th className="tableHeaderCell">S.No</th>
-                  <th className="tableHeaderCell">RNO</th>
+                  <th className="tableHeaderCell">S.No:</th>
+                  <th className="tableHeaderCell">Roll No</th>
                   <th className="tableHeaderCell">Student Name</th>
                   <th className="tableHeaderCell">Father Name</th>
                   <th className="tableHeaderCell">Registration No</th>
@@ -247,7 +247,7 @@ function ConfidentialList() {
         .signatureLine {
           border-bottom: 1px solid #000;
           margin-top: 30px; /* Space for signature */
-          width: 80%; /* Adjust line length */
+          width: 70%; /* Adjust line length */
         }
  
       `}</style>

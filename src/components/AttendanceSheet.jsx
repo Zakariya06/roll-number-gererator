@@ -12,14 +12,21 @@ function AttendanceSheet({ selectedAtStatus }) {
   // Get the full list of students from excelData
   const allStudents = excelData[0]?.data || [];
 
-  // Get all unique subjects from all students
+  // Get all unique subjects from all students - FIXED
   const getAllUniqueSubjects = () => {
     if (!excelData[0]?.data) return [];
 
     const allSubjects = new Set();
     excelData[0].data.forEach((student) => {
       student.subjects?.forEach((subject) => {
-        if (subject && subject.trim() !== "") {
+        if (
+          typeof subject === "object" &&
+          subject.subject &&
+          subject.subject.trim() !== ""
+        ) {
+          allSubjects.add(subject.subject.trim());
+        } else if (typeof subject === "string" && subject.trim() !== "") {
+          // Handle case where subject might still be a string
           allSubjects.add(subject.trim());
         }
       });
@@ -52,13 +59,53 @@ function AttendanceSheet({ selectedAtStatus }) {
 
   const regularStudentsCount = regularStudents.length;
 
+  // Function to check if student has a specific subject - FIXED
+  const studentHasSubject = (student, subjectName) => {
+    return student.subjects?.some((subject) => {
+      if (typeof subject === "object") {
+        return subject.subject === subjectName;
+      } else if (typeof subject === "string") {
+        return subject === subjectName;
+      }
+      return false;
+    });
+  };
+
+  // Function to get subject date - FIXED
+  const getSubjectDate = (subjectName) => {
+    // First try to find in editableData.subjects
+    const editableSubject = editableData.subjects?.find(
+      (sub) =>
+        sub.subject.toLowerCase().trim() === subjectName.toLowerCase().trim()
+    );
+
+    if (editableSubject?.date && editableSubject.date !== "dd/mm/yyyy") {
+      return editableSubject.date;
+    }
+
+    // If not found in editableData, try to find in any student's subjects
+    for (let student of allStudents) {
+      const studentSubject = student.subjects?.find((sub) => {
+        if (typeof sub === "object") {
+          return sub.subject === subjectName;
+        }
+        return false;
+      });
+      if (studentSubject?.date && studentSubject.date !== "dd/mm/yyyy") {
+        return studentSubject.date;
+      }
+    }
+
+    return "dd/mm/yyyy"; // Default date
+  };
+
   return (
     <>
       {/* Generate separate sheets for each subject */}
       {uniqueSubjects.map((subject, subjectIndex) => {
-        // Filter students who have this subject
+        // Filter students who have this subject - FIXED
         const studentsWithSubject = allStudents.filter((student) =>
-          student.subjects?.includes(subject)
+          studentHasSubject(student, subject)
         );
 
         // Create chunks of students for this subject
@@ -152,11 +199,7 @@ function AttendanceSheet({ selectedAtStatus }) {
                             className="detailValue ms-2 "
                             style={{ width: "100px" }}
                           >
-                            {editableData.subjects.find(
-                              (sub) =>
-                                sub.subject.toLowerCase().trim() ===
-                                subject.toLowerCase().trim()
-                            )?.date || "6-Jan-25"}
+                            {getSubjectDate(subject)}
                           </span>
                         </p>
                       </div>
@@ -170,10 +213,10 @@ function AttendanceSheet({ selectedAtStatus }) {
                     <thead className="tableHeader">
                       <tr>
                         <th className="tableHeaderCell" rowSpan="2">
-                          SNO
+                          S.No:
                         </th>
                         <th className="tableHeaderCell" rowSpan="2">
-                          RNO
+                          Roll No
                         </th>
                         <th className="tableHeaderCell" rowSpan="2">
                           Student Name
@@ -255,9 +298,25 @@ function AttendanceSheet({ selectedAtStatus }) {
                   </div>
                   <div className="signatureBlock text-end">
                     <p className="signatureLabel mb-0">Deputy Supdt :</p>
-                    <div className="signatureLine"></div>
+                    <div className="signatureLine ms-auto"></div>
                   </div>
                 </div>
+
+                <div className="  d-flex justify-content-between align-items-end mt-5">
+                  <div className="signatureBlock">
+                    <p className="signatureLabel mb-0">Total Students :</p>
+                    <div className="signatureLine"></div>
+                  </div>
+                  <div className="signatureBlock ">
+                    <p className="signatureLabel mb-0">Present Students :</p>
+                    <div className="signatureLine"></div>
+                  </div>
+                  <div className="signatureBlock text-end">
+                    <p className="signatureLabel mb-0">Absent Students :</p>
+                    <div className="signatureLine ms-auto"></div>
+                  </div>
+                </div>
+
                 <br />
                 <br />
                 <br />
@@ -306,8 +365,7 @@ function AttendanceSheet({ selectedAtStatus }) {
         }
 
         .footerSection {
-          padding-top: 20px;
-          border-top: 2px solid #000;
+          padding-top: 20px; 
         }
 
         .signatureBlock {

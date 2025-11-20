@@ -1,13 +1,7 @@
+// DefaultSlip.jsx - Updated component
 import { useEffect, useState, useRef } from "react";
 import { useSheetContext } from "../context/sheetData";
-import {
-  FiEdit,
-  FiPlusCircle,
-  FiSave,
-  FiTrash2,
-  FiUpload,
-  FiX,
-} from "react-icons/fi";
+import { FiEdit, FiSave, FiTrash2, FiUpload, FiX } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa";
 import logo from "../assets/khyber_medical_university_logo.jpeg";
 import ihslogo from "../assets/kmu_ihs_logo.png";
@@ -24,7 +18,6 @@ const DefaultSlip = ({
   setFileUploaded,
 }) => {
   const { excelData, editableData, setEditableData } = useSheetContext();
-  const [hoveredRow, setHoveredRow] = useState(null);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [isEditingInstructions, setIsEditingInstructions] = useState(false);
   const [showSlip, setShowSlip] = useState(false);
@@ -33,48 +26,14 @@ const DefaultSlip = ({
 
   const navigate = useNavigate();
 
-  // Default instructions text
   const defaultInstructionsText = `1. You are advised to report at exam centre thirty (30) minutes before the scheduled paper time.\n2. You are advised to bring this ROLL NO SLIP along with your Original National ID Card / Passport or B-Form or Matric Certificate (less than 18 years age) containing your photograph (mandatory). Candidates failing to produce ROLL NO SLIP and Original CNIC would not be allowed to enter the examination hall.\n3. If your CNIC/B Form is lost, please bring a copy of FIR, Newspaper cutting and Original NADRA token showing that you have applied for the same.\n4. Please don't bring any of Gadgets with you. Candidates shall be searched for cellphones/smart/watch/electronic devices and if found, it will be confiscated and UFM case shall be registered accordingly.\n5. No candidate will be allowed to enter the examination hall after 15 minutes of the start of paper.\n6. Any student who fails to fill the paper code or Roll No on MCQ response sheet will be considered absent.\n7. This Roll No is being issued provisionally and shall be confirmed subject to verification.`;
 
-  // Initialize subjects from Excel data when component mounts
-  useEffect(() => {
-    if (excelData[0]?.data && editableData.subjects.length === 0) {
-      const uniqueSubjects = getAllUniqueSubjects();
-      const initialSubjects = uniqueSubjects.map((subject, index) => ({
-        id: `subject-${index}-${Date.now()}`,
-        subject: subject,
-        date: "dd/mm/yy",
-        timing: "00:00 to 00:00",
-      }));
-
-      setEditableData((prev) => ({
-        ...prev,
-        subjects: initialSubjects,
-      }));
-    }
-  }, [excelData, editableData.subjects.length, setEditableData]);
+  // Get subjects for display (all master subjects)
+  const displaySubjects = editableData.subjects || [];
 
   const handleSaveInstructions = () => {
     setIsEditingInstructions(false);
   };
-
-  // Get all unique subjects from all students
-  const getAllUniqueSubjects = () => {
-    if (!excelData[0]?.data) return [];
-
-    const allSubjects = new Set();
-    excelData[0].data.forEach((student) => {
-      student.subjects?.forEach((subject) => {
-        if (subject && subject.trim() !== "") {
-          allSubjects.add(subject.trim());
-        }
-      });
-    });
-
-    return Array.from(allSubjects);
-  };
-
-  const uniqueSubjects = getAllUniqueSubjects();
 
   const handleInputChange = (e, key, index) => {
     if (key === "subjects") {
@@ -93,7 +52,7 @@ const DefaultSlip = ({
     setEditableData({ ...editableData, subjects: updatedSubjects });
   };
 
-  // Handle subject name change specifically
+  // Handle subject name change
   const handleSubjectNameChange = (index, newSubjectName) => {
     const updatedSubjects = [...editableData.subjects];
     updatedSubjects[index].subject = newSubjectName;
@@ -105,16 +64,31 @@ const DefaultSlip = ({
       id: `new-${Date.now()}`,
       subject: "New Subject",
       date: "dd/mm/yyyy",
-      timing: "00:00 to 00:00",
+      timing: "09:00 AM to 12:00 PM",
     };
     const updated = [...editableData.subjects, newRow];
     setEditableData({ ...editableData, subjects: updated });
   };
 
   const deleteRow = (index) => {
+    const subjectToDelete = editableData.subjects[index];
+
+    // Check if this subject is used by any student
+    const isSubjectUsed = excelData[0]?.data.some((student) =>
+      student.subjects?.includes(subjectToDelete.subject)
+    );
+
+    if (isSubjectUsed) {
+      enqueueSnackbar("Cannot delete subject that is assigned to students", {
+        variant: "warning",
+      });
+      return;
+    }
+
     const updated = [...editableData.subjects];
     updated.splice(index, 1);
     setEditableData({ ...editableData, subjects: updated });
+    enqueueSnackbar("Subject deleted successfully", { variant: "success" });
   };
 
   // Handle logo upload
@@ -147,21 +121,17 @@ const DefaultSlip = ({
     navigate("/rollNumbers");
   };
 
-  // Handle Edit button click - toggle between static and edit mode
   const handleEditClick = () => {
     if (showSlip) {
-      // Currently in edit mode, save and go back to static
       setShowSlip(false);
       setEditMode(false);
       enqueueSnackbar("Changes saved successfully!", { variant: "success" });
     } else {
-      // Currently in static mode, switch to edit mode
       setShowSlip(true);
       setEditMode(true);
     }
   };
 
-  // Handle Generate button click
   const handleGenerateClick = () => {
     handleGenerateRollNumbers();
   };
@@ -248,7 +218,6 @@ const DefaultSlip = ({
               <div className="ihsLogoWrapper d-flex align-items-center">
                 <img src={logo} alt="KMU" className="kmuLogo" />
 
-                {/* IHS Logo with upload functionality */}
                 <div
                   className="ihsLogoContainer"
                   onMouseEnter={() => setIsLogoHovered(true)}
@@ -263,11 +232,10 @@ const DefaultSlip = ({
                     <img
                       src={editableData.logoImagePath}
                       alt="ihs logo"
-                      className="ihsLogo  "
+                      className="ihsLogo"
                     />
                   ) : (
                     <>
-                      {/* Upload overlay */}
                       <div
                         className="logoUploadOverlay"
                         style={{
@@ -299,7 +267,6 @@ const DefaultSlip = ({
                     </>
                   )}
 
-                  {/* Hidden file input */}
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -423,7 +390,7 @@ const DefaultSlip = ({
                           </tr>
                         </thead>
                         <tbody>
-                          {editableData.subjects.map((subject, index) => (
+                          {displaySubjects.map((subject, index) => (
                             <tr key={subject.id} className="tableRow">
                               <td
                                 className="tableCell"
@@ -576,7 +543,6 @@ const DefaultSlip = ({
 
               <div className="instructionsList">
                 {isEditingInstructions ? (
-                  // Edit mode - show single textarea
                   <div className="editable-instructions">
                     <textarea
                       value={
@@ -598,7 +564,6 @@ const DefaultSlip = ({
                     </div>
                   </div>
                 ) : (
-                  // View mode - show the single paragraph with line breaks
                   <div className="static-instructions">
                     <p className="instructionItem">
                       {editableData.instructionsText ? (
@@ -611,7 +576,6 @@ const DefaultSlip = ({
                             </span>
                           ))
                       ) : (
-                        // Default instructions
                         <>
                           1. You are advised to report at exam centre thirty
                           (30) minutes before the scheduled paper time.
@@ -653,7 +617,6 @@ const DefaultSlip = ({
           </div>
         </div>
       ) : (
-        // STATIC MODE - Show StaticSlip (non-editable)
         <StaticSlip />
       )}
     </>

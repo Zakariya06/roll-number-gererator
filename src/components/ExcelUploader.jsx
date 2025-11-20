@@ -9,7 +9,7 @@ import DefaultSlip from "./DefaultSlip.jsx";
 import StaticSlip from "./StaticSlip.jsx";
 
 export default function ExcelUploader() {
-  const { setExcelData } = useSheetContext();
+  const { setExcelData, setEditableData } = useSheetContext();
   const [fileName, setFileName] = useState("");
   const [rollNumLength, setRollNumLength] = useState(0);
   const [rollNumberFocus, setRollNumberFocus] = useState(false);
@@ -50,13 +50,13 @@ export default function ExcelUploader() {
     setImages(urls);
     return urls;
   };
-
+  
   const onDrop = useCallback(
     async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (!file) return;
       setFileName(file.name);
-      setFileUploaded(true); // Set file uploaded to true
+      setFileUploaded(true);
 
       // Extract images
       const imageUrls = await extractImagesFromExcel(file);
@@ -72,11 +72,19 @@ export default function ExcelUploader() {
 
         const formattedData = transformExcelData(jsonData, imageUrls);
         setExcelData(formattedData);
+
+        // Initialize editableData with master subjects
+        if (formattedData[0]?.masterSubjects) {
+          setEditableData((prev) => ({
+            ...prev,
+            subjects: formattedData[0].masterSubjects,
+          }));
+        }
       };
 
       reader.readAsBinaryString(file);
     },
-    [rollNumLength, navigate, setExcelData]
+    [setExcelData, setEditableData]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -87,28 +95,70 @@ export default function ExcelUploader() {
     },
   });
 
+  // Updated transformExcelData function
   function transformExcelData(rawData, images = []) {
     if (!Array.isArray(rawData) || rawData.length < 1) return [];
 
-    // ✅ Include both "Regular" and "Re-appear" students (case-insensitive + trimmed)
     const filteredData = rawData.filter((row) => {
       const status = (row.Status || row.status || "").toLowerCase().trim();
       return status === "regular" || status === "re-appear";
     });
 
-    const students = filteredData.map((row, index) => {
-      // ✅ Normalize keys to lowercase + trim keys
+    // Create master subjects list with IDs first
+    const allSubjects = new Map();
+    let subjectIdCounter = 1;
+
+    // First pass: collect all unique subjects
+    filteredData.forEach((row) => {
       const normalizedRow = Object.keys(row).reduce((acc, key) => {
         acc[key.toLowerCase().trim()] = row[key];
         return acc;
       }, {});
-      // ✅ Extract subjects dynamically (case-insensitive + trimmed)
+
       const subjects = Object.keys(normalizedRow)
         .filter((key) => key.startsWith("subject"))
-        .map((key) => (normalizedRow[key] || "").trim()) // trim subject names too
+        .map((key) => (normalizedRow[key] || "").trim())
         .filter((subject) => !!subject);
 
-      // ✅ Cleaned and trimmed data for each student
+      subjects.forEach((subjectName) => {
+        if (subjectName && subjectName.trim() !== "") {
+          const cleanSubject = subjectName.trim();
+          if (!allSubjects.has(cleanSubject)) {
+            allSubjects.set(cleanSubject, {
+              id: `subject-${subjectIdCounter++}`,
+              subject: cleanSubject,
+              date: "dd/mm/yyyy",
+              timing: "00:00 to 00:00",
+            });
+          }
+        }
+      });
+    });
+
+    const students = filteredData.map((row, index) => {
+      const normalizedRow = Object.keys(row).reduce((acc, key) => {
+        acc[key.toLowerCase().trim()] = row[key];
+        return acc;
+      }, {});
+
+      const subjectNames = Object.keys(normalizedRow)
+        .filter((key) => key.startsWith("subject"))
+        .map((key) => (normalizedRow[key] || "").trim())
+        .filter((subject) => !!subject);
+
+      // Map subject names to full subject objects with date and timing
+      const subjectsWithDetails = subjectNames.map((subjectName) => {
+        const cleanSubject = subjectName.trim();
+        return (
+          allSubjects.get(cleanSubject) || {
+            id: `subject-${subjectIdCounter++}`,
+            subject: cleanSubject,
+            date: "dd/mm/yyyy",
+            timing: "09:00 AM to 12:00 PM",
+          }
+        );
+      });
+
       return {
         serialNumber: (normalizedRow["s#"] || index + 1).toString().trim(),
         rollNumber: (normalizedRow["roll #"] || "").toString().trim(),
@@ -125,9 +175,9 @@ export default function ExcelUploader() {
         ).trim(),
         program: (normalizedRow["discipline"] || "").trim(),
         status: (normalizedRow["status"] || "").trim(),
-        regionalExamCell: (normalizedRow["regional exam cell"] || "").trim(),
+        regionalExamCell: (normalizedRow["region"] || "").trim(),
         institute: (normalizedRow["institute"] || "").trim(),
-        subjects,
+        subjects: subjectsWithDetails,
         imagePath: images[index] || "",
       };
     });
@@ -139,6 +189,7 @@ export default function ExcelUploader() {
         semester: "",
         regionalExamCell: students[0]?.regionalExamCell || "",
         data: students,
+        masterSubjects: Array.from(allSubjects.values()),
       },
     ];
   }
