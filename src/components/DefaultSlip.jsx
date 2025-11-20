@@ -364,7 +364,7 @@ const DefaultSlip = ({
                           <span className="infoLabel">Institute:</span>
                           <input
                             type="text"
-                            className="infoValue"
+                            className="infoValue" 
                             value={editableData.institute}
                             onChange={(e) => handleInputChange(e, "institute")}
                           />

@@ -50,7 +50,7 @@ export default function ExcelUploader() {
     setImages(urls);
     return urls;
   };
-  
+
   const onDrop = useCallback(
     async (acceptedFiles) => {
       const file = acceptedFiles[0];
@@ -159,15 +159,21 @@ export default function ExcelUploader() {
         );
       });
 
+      // FIXED: Handle different quote types in "Father's Name"
+      const fatherName = (
+        normalizedRow["father's name"] || // regular apostrophe
+        normalizedRow["father’s name"] || // right single quote (from your Excel)
+        normalizedRow["father name"] ||
+        normalizedRow["father"] ||
+        normalizedRow["fathers name"] ||
+        ""
+      ).trim();
+
       return {
         serialNumber: (normalizedRow["s#"] || index + 1).toString().trim(),
         rollNumber: (normalizedRow["roll #"] || "").toString().trim(),
         name: (normalizedRow["name"] || "").trim(),
-        fatherName: (
-          normalizedRow["father's name"] ||
-          normalizedRow["father's name"] ||
-          ""
-        ).trim(),
+        fatherName: fatherName,
         registration: (
           normalizedRow["registration"] ||
           normalizedRow["registration "] ||
@@ -181,6 +187,22 @@ export default function ExcelUploader() {
         imagePath: images[index] || "",
       };
     });
+
+    // Debug: Check what normalized keys we have for father's name
+    if (filteredData[0]) {
+      const sampleNormalized = Object.keys(filteredData[0]).reduce(
+        (acc, key) => {
+          acc[key.toLowerCase().trim()] = filteredData[0][key];
+          return acc;
+        },
+        {}
+      );
+    }
+
+    setEditableData((prev) => ({
+      ...prev,
+      institute: students[0]?.institute,
+    }));
 
     return [
       {

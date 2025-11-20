@@ -40,14 +40,15 @@ export default function RollNumberSlip() {
     // ✅ Ask for save location right away (while still in user gesture)
     if (window.showSaveFilePicker) {
       try {
+        editableData.institute;
         const suggestedName =
           target === "attendanceSheetContainer"
-            ? `${excelData[0]?.instituteName || ""} AS.pdf`
+            ? `${editableData.institute || ""} AS.pdf`
             : target === "confidentialListContainer"
-            ? `${excelData[0]?.instituteName || ""} CL.pdf`
+            ? `${editableData.institute || ""} CL.pdf`
             : target === "reappearStudentData"
-            ? `${excelData[0]?.instituteName || ""} Re-appear Data Students.pdf`
-            : `${excelData[0]?.instituteName || ""} RN.pdf`;
+            ? `${editableData.institute || ""} Re-appear Data Students.pdf`
+            : `${editableData.institute || ""} RN.pdf`;
 
         handle = await window.showSaveFilePicker({
           suggestedName,
@@ -129,9 +130,9 @@ export default function RollNumberSlip() {
     exportToExcel({
       data: excelData[0]?.data || [],
       rollStart: editableData.rollNumber,
-      institue: excelData[0]?.instituteName || "",
+      institue: editableData.institute,
       exam: editableData.semesterTitle,
-      fileName: `${excelData[0]?.instituteName || ""} Sign OSPE list.xlsx`,
+      fileName: `${editableData.institute} Sign OSPE list.xlsx`,
     });
   };
 
@@ -151,7 +152,7 @@ export default function RollNumberSlip() {
         institue: editableData.institute,
         exam: editableData.semesterTitle,
         station: selectedStation,
-        fileName: `${excelData[0]?.instituteName || ""} OSPE List.xlsx`,
+        fileName: `${editableData.institute} OSPE List.xlsx`,
       });
       setStationModal(false);
       setSelectedStation(null);
@@ -336,7 +337,7 @@ export default function RollNumberSlip() {
                             <div className="infoItem mt-2">
                               <span className="infoLabel">Institute:</span>
                               <span className="infoValue">
-                                {excelData[0]?.instituteName || ""}
+                                {editableData.institute}
                               </span>
                             </div>
                             <div className="infoItem mt-2">
