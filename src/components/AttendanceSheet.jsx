@@ -77,11 +77,13 @@ function AttendanceSheet() {
                     <div className="headerSection d-flex justify-content-between align-items-center mb-4">
                       <div className="ihsLogoWrapper">
                         <img src={logo} alt="KMU" className="kmuLogo" />
-                        <img
-                          src={ihslogo}
-                          alt="ihs logo "
-                          className=" ihsLogo   mt-2"
-                        />
+                        {editableData.logoImagePath && (
+                          <img
+                            src={editableData.logoImagePath}
+                            alt="ihs logo"
+                            className="ihsLogo  "
+                          />
+                        )}
                       </div>
                       <div className="titleSection">
                         <h1 className="universityTitle">

@@ -18,11 +18,13 @@ const StaticSlip = () => {
               className="ihsLogoContainer"
               style={{ position: "relative", display: "inline-block" }}
             >
-              <img
-                src={editableData.logoImagePath || ihslogo}
-                alt="ihs logo"
-                className="ihsLogo mt-2"
-              />
+              {editableData.logoImagePath && (
+                <img
+                  src={editableData.logoImagePath}
+                  alt="ihs logo"
+                  className="ihsLogo mt-2"
+                />
+              )}
             </div>
           </div>
 

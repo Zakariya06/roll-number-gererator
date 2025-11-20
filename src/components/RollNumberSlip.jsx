@@ -369,25 +369,66 @@ export default function RollNumberSlip() {
                               </tr>
                             </thead>
                             <tbody>
-                              <>
-                                {editableData.subjects.map((sub, i) => (
-                                  <tr key={i} className="tableRow">
-                                    <td
-                                      className="tableCell"
-                                      style={{ width: "40px" }}
-                                    >
-                                      {i + 1}
-                                    </td>
-                                    <td className="tableCell text-start">
-                                      {sub.subject}
-                                    </td>
-                                    <td className="tableCell">{sub.date}</td>
-                                    <td className="tableCell deleteRowCell">
-                                      {sub.timing}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </>
+                              {row.status.toLowerCase().trim() ===
+                              "re-appear" ? (
+                                <>
+                                  {row.subjects.map((sub, i) => (
+                                    <tr key={i} className="tableRow">
+                                      <td
+                                        className="tableCell"
+                                        style={{ width: "40px" }}
+                                      >
+                                        {i + 1}
+                                      </td>
+                                      <td className="tableCell text-start">
+                                        {sub}
+                                      </td>
+                                      <td className="tableCell">
+                                        {
+                                          editableData.subjects.find(
+                                            (subject) =>
+                                              subject.subject
+                                                .toLowerCase()
+                                                .trim() ===
+                                              sub.toLowerCase().trim()
+                                          )?.date
+                                        }
+                                      </td>
+                                      <td className="tableCell deleteRowCell">
+                                        {
+                                          editableData.subjects.find(
+                                            (subject) =>
+                                              subject.subject
+                                                .toLowerCase()
+                                                .trim() ===
+                                              sub.toLowerCase().trim()
+                                          )?.timing
+                                        }
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </>
+                              ) : (
+                                <>
+                                  {editableData.subjects.map((sub, i) => (
+                                    <tr key={i} className="tableRow">
+                                      <td
+                                        className="tableCell"
+                                        style={{ width: "40px" }}
+                                      >
+                                        {i + 1}
+                                      </td>
+                                      <td className="tableCell text-start">
+                                        {sub.subject}
+                                      </td>
+                                      <td className="tableCell">{sub.date}</td>
+                                      <td className="tableCell deleteRowCell">
+                                        {sub.timing}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </>
+                              )}
                             </tbody>
                           </table>
                         </div>

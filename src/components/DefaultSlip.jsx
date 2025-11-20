@@ -245,7 +245,7 @@ const DefaultSlip = ({
           <div className="mainBorder">
             {/* Header Section */}
             <div className="headerSection">
-              <div className="ihsLogoWrapper">
+              <div className="ihsLogoWrapper d-flex align-items-center">
                 <img src={logo} alt="KMU" className="kmuLogo" />
 
                 {/* IHS Logo with upload functionality */}
@@ -253,41 +253,50 @@ const DefaultSlip = ({
                   className="ihsLogoContainer"
                   onMouseEnter={() => setIsLogoHovered(true)}
                   onMouseLeave={() => setIsLogoHovered(false)}
-                  style={{ position: "relative", display: "inline-block" }}
+                  style={{
+                    position: "relative",
+                    width: "60px",
+                    height: editableData.logoImagePath ? "auto" : "60px",
+                  }}
                 >
-                  <img
-                    src={editableData.logoImagePath || ihslogo}
-                    alt="ihs logo"
-                    className="ihsLogo mt-2"
-                  />
-
-                  {/* Upload overlay */}
-                  {isLogoHovered && (
-                    <div
-                      className="logoUploadOverlay"
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                      onClick={triggerFileInput}
-                    >
-                      <FiUpload
+                  {editableData.logoImagePath ? (
+                    <img
+                      src={editableData.logoImagePath}
+                      alt="ihs logo"
+                      className="ihsLogo  "
+                    />
+                  ) : (
+                    <>
+                      {/* Upload overlay */}
+                      <div
+                        className="logoUploadOverlay"
                         style={{
-                          color: "white",
-                          fontSize: "24px",
-                          filter: "drop-shadow(0 0 2px rgba(0,0,0,0.5))",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          backgroundColor: "rgba(0, 0, 0, 0.5)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "4px",
+                          padding: "1rem",
+                          width: "60px",
+                          height: "60px",
+                          cursor: "pointer",
                         }}
-                      />
-                    </div>
+                        onClick={triggerFileInput}
+                      >
+                        <FiUpload
+                          style={{
+                            color: "white",
+                            fontSize: "24px",
+                            filter: "drop-shadow(0 0 2px rgba(0,0,0,0.5))",
+                          }}
+                        />
+                      </div>
+                    </>
                   )}
 
                   {/* Hidden file input */}
