@@ -189,15 +189,15 @@ export default function ExcelUploader() {
     });
 
     // Debug: Check what normalized keys we have for father's name
-    if (filteredData[0]) {
-      const sampleNormalized = Object.keys(filteredData[0]).reduce(
-        (acc, key) => {
-          acc[key.toLowerCase().trim()] = filteredData[0][key];
-          return acc;
-        },
-        {}
-      );
-    }
+    // if (filteredData[0]) {
+    //   const sampleNormalized = Object.keys(filteredData[0]).reduce(
+    //     (acc, key) => {
+    //       acc[key.toLowerCase().trim()] = filteredData[0][key];
+    //       return acc;
+    //     },
+    //     {}
+    //   );
+    // }
 
     setEditableData((prev) => ({
       ...prev,
