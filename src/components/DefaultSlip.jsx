@@ -280,7 +280,9 @@ const DefaultSlip = ({
               <div className="titleSection">
                 <h1 className="universityTitle">Khyber Medical University</h1>
                 <p className="programTitle">
-                  Regional Exam Cell - {excelData[0]?.regionalExamCell}
+                  Regional Exam Cell -{" "}
+                  {excelData[0]?.regionalExamCell &&
+                    excelData[0]?.regionalExamCell}
                 </p>
                 <input
                   type="text"
@@ -364,7 +366,7 @@ const DefaultSlip = ({
                           <span className="infoLabel">Institute:</span>
                           <input
                             type="text"
-                            className="infoValue" 
+                            className="infoValue"
                             value={editableData.institute}
                             onChange={(e) => handleInputChange(e, "institute")}
                           />

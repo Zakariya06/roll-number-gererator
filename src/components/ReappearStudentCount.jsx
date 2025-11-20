@@ -56,9 +56,13 @@ function ReappearStudentCount() {
               <tbody className="tableBody">
                 {reappearSubjectsWithCounts.map((item, index) => (
                   <tr key={index} className="tableRow">
-                    <td className="tableCell text-center">{index + 1}</td>
+                    <td className="tableCell  ">
+                      <p className="text-center"> {index + 1}</p>
+                    </td>
                     <td className="tableCell">{item.subject}</td>
-                    <td className="tableCell text-center">{item.count}</td>
+                    <td className="tableCell text-center">
+                      <p className="text-center">{item.count}</p>
+                    </td>
                   </tr>
                 ))}
                 {/* Total Row
