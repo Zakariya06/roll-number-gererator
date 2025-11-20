@@ -9,13 +9,15 @@ import DefaultSlip from "./DefaultSlip.jsx";
 import StaticSlip from "./StaticSlip.jsx";
 
 export default function ExcelUploader() {
-  const { setExcelData, setEditableData } = useSheetContext();
+  const { setExcelData, setEditableData, getMergedSubjects } =
+    useSheetContext();
+
   const [fileName, setFileName] = useState("");
   const [rollNumLength, setRollNumLength] = useState(0);
   const [rollNumberFocus, setRollNumberFocus] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [images, setImages] = useState([]);
-  const [fileUploaded, setFileUploaded] = useState(false); // New state to track file upload
+  const [fileUploaded, setFileUploaded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -24,13 +26,13 @@ export default function ExcelUploader() {
     const arrayBuffer = await file.arrayBuffer();
     await wb.xlsx.load(arrayBuffer);
 
-    const sheet = wb.worksheets[0]; // Assuming first sheet
-    const imageMap = {}; // key: row number, value: image URL
+    const sheet = wb.worksheets[0];
+    const imageMap = {};
 
     sheet.getImages().forEach((img) => {
       const imageId = img.imageId;
       const media = wb.getImage(imageId);
-      const rowIndex = img.range.tl.nativeRow - 1; // top-left row of the image
+      const rowIndex = img.range.tl.nativeRow - 1;
 
       if (media?.buffer) {
         const blob = new Blob([media.buffer], {
@@ -41,7 +43,6 @@ export default function ExcelUploader() {
       }
     });
 
-    // Convert imageMap to array based on row index
     const maxRow = Math.max(...Object.keys(imageMap));
     const urls = Array.from({ length: maxRow + 1 }).map(
       (_, i) => imageMap[i] || ""
@@ -71,20 +72,25 @@ export default function ExcelUploader() {
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
         const formattedData = transformExcelData(jsonData, imageUrls);
+        console.log("formated data", formattedData);
         setExcelData(formattedData);
 
-        // Initialize editableData with master subjects
+        // Initialize editableData with master subjects (merged with static data)
         if (formattedData[0]?.masterSubjects) {
+          const subjectsWithStaticData = getMergedSubjects(
+            formattedData[0].masterSubjects
+          );
+
           setEditableData((prev) => ({
             ...prev,
-            subjects: formattedData[0].masterSubjects,
+            subjects: subjectsWithStaticData,
           }));
         }
       };
 
       reader.readAsBinaryString(file);
     },
-    [setExcelData, setEditableData]
+    [setExcelData, setEditableData, getMergedSubjects]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -95,29 +101,28 @@ export default function ExcelUploader() {
     },
   });
 
-  // Updated transformExcelData function
+  // transformExcelData function
   function transformExcelData(rawData, images = []) {
     if (!Array.isArray(rawData) || rawData.length < 1) return [];
 
+    console.log("this is rawData", rawData);
+
     const filteredData = rawData.filter((row) => {
-      const status = (row.Status || row.status || "").toLowerCase().trim();
+      const status = (row.Status || row.status || "")
+        .toString()
+        .toLowerCase()
+        .trim();
       return status === "regular" || status === "re-appear";
     });
 
-    // Create master subjects list with IDs first
     const allSubjects = new Map();
     let subjectIdCounter = 1;
 
     // First pass: collect all unique subjects
     filteredData.forEach((row) => {
-      const normalizedRow = Object.keys(row).reduce((acc, key) => {
-        acc[key.toLowerCase().trim()] = row[key];
-        return acc;
-      }, {});
-
-      const subjects = Object.keys(normalizedRow)
-        .filter((key) => key.startsWith("subject"))
-        .map((key) => (normalizedRow[key] || "").trim())
+      const subjects = Object.keys(row)
+        .filter((key) => key.toLowerCase().startsWith("subject"))
+        .map((key) => (row[key] || "").toString().trim())
         .filter((subject) => !!subject);
 
       subjects.forEach((subjectName) => {
@@ -135,18 +140,35 @@ export default function ExcelUploader() {
       });
     });
 
-    const students = filteredData.map((row, index) => {
-      const normalizedRow = Object.keys(row).reduce((acc, key) => {
-        acc[key.toLowerCase().trim()] = row[key];
-        return acc;
-      }, {});
+    // Helper function to get field value case-insensitively
+    const getFieldValue = (row, fieldNames) => {
+      const lowerRow = {};
 
-      const subjectNames = Object.keys(normalizedRow)
-        .filter((key) => key.startsWith("subject"))
-        .map((key) => (normalizedRow[key] || "").trim())
+      // Create a lowercase version of all keys for case-insensitive matching
+      Object.keys(row).forEach((key) => {
+        lowerRow[key.toLowerCase()] = row[key];
+      });
+
+      for (const fieldName of fieldNames) {
+        const lowerFieldName = fieldName.toLowerCase();
+        if (
+          lowerRow[lowerFieldName] !== undefined &&
+          lowerRow[lowerFieldName] !== null &&
+          lowerRow[lowerFieldName] !== ""
+        ) {
+          return lowerRow[lowerFieldName].toString().trim();
+        }
+      }
+      return "";
+    };
+
+    const students = filteredData.map((row, index) => {
+      const subjectNames = Object.keys(row)
+        .filter((key) => key.toLowerCase().startsWith("subject"))
+        .map((key) => (row[key] || "").toString().trim())
         .filter((subject) => !!subject);
 
-      // Map subject names to full subject objects with date and timing
+      // Map subject names to full subject objects
       const subjectsWithDetails = subjectNames.map((subjectName) => {
         const cleanSubject = subjectName.trim();
         return (
@@ -159,49 +181,71 @@ export default function ExcelUploader() {
         );
       });
 
-      // FIXED: Handle different quote types in "Father's Name"
-      const fatherName = (
-        normalizedRow["father's name"] || // regular apostrophe
-        normalizedRow["father’s name"] || // right single quote (from your Excel)
-        normalizedRow["father name"] ||
-        normalizedRow["father"] ||
-        normalizedRow["fathers name"] ||
-        ""
-      ).trim();
+      // Case-insensitive field extraction
+      const fatherName = getFieldValue(row, [
+        "Father's Name",
+        "Father’s Name",
+        "Father`s Name",
+        "Father Name",
+        "Fathers Name",
+        "Father",
+      ]);
+
+      const serialNumber =
+        getFieldValue(row, ["S#", "S.No", "Serial", "Serial Number"]) ||
+        (index + 1).toString();
+      const rollNumber = getFieldValue(row, [
+        "Roll #",
+        "Roll No",
+        "Roll Number",
+        "Roll",
+      ]);
+      const name = getFieldValue(row, ["Name", "Student Name", "Student"]);
+      const registration = getFieldValue(row, [
+        "Registration",
+        "Registration No",
+        "Reg No",
+        "Reg",
+      ]);
+      const program = getFieldValue(row, [
+        "Discipline",
+        "Program",
+        "Course",
+        "Degree",
+      ]);
+      const status = getFieldValue(row, ["Status"]);
+      const regionalExamCell = getFieldValue(row, [
+        "Regional Exam Cell",
+        "Region",
+        "Exam Cell",
+        "Center",
+      ]);
+      const institute = getFieldValue(row, [
+        "Institute",
+        "College",
+        "School",
+        "University",
+      ]);
 
       return {
-        serialNumber: (normalizedRow["s#"] || index + 1).toString().trim(),
-        rollNumber: (normalizedRow["roll #"] || "").toString().trim(),
-        name: (normalizedRow["name"] || "").trim(),
+        serialNumber: serialNumber,
+        rollNumber: rollNumber,
+        name: name,
         fatherName: fatherName,
-        registration: (
-          normalizedRow["registration"] ||
-          normalizedRow["registration "] ||
-          ""
-        ).trim(),
-        program: (normalizedRow["discipline"] || "").trim(),
-        status: (normalizedRow["status"] || "").trim(),
-        regionalExamCell: (normalizedRow["region"] || "").trim(),
-        institute: (normalizedRow["institute"] || "").trim(),
+        registration: registration,
+        program: program,
+        status: status,
+        regionalExamCell: regionalExamCell,
+        institute: institute,
         subjects: subjectsWithDetails,
         imagePath: images[index] || "",
       };
     });
 
-    // Debug: Check what normalized keys we have for father's name
-    // if (filteredData[0]) {
-    //   const sampleNormalized = Object.keys(filteredData[0]).reduce(
-    //     (acc, key) => {
-    //       acc[key.toLowerCase().trim()] = filteredData[0][key];
-    //       return acc;
-    //     },
-    //     {}
-    //   );
-    // }
-
     setEditableData((prev) => ({
       ...prev,
       institute: students[0]?.institute,
+      region: students[0]?.regionalExamCell,
     }));
 
     return [
@@ -246,7 +290,6 @@ export default function ExcelUploader() {
                 </Col>
               </Row>
 
-              {/* Loading Spinner Modal */}
               <Modal show={pdfLoading} centered size="sm">
                 <div className="text-center p-4">
                   <Spinner animation="border" variant="danger" />

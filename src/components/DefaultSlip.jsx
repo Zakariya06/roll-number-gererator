@@ -17,7 +17,15 @@ const DefaultSlip = ({
   rollNumLength,
   setFileUploaded,
 }) => {
-  const { excelData, editableData, setEditableData } = useSheetContext();
+  const {
+    excelData,
+    editableData,
+    setEditableData,
+    setExcelData,
+    updateSubjectDateTime,
+    staticDateTimeData,
+  } = useSheetContext();
+
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [isEditingInstructions, setIsEditingInstructions] = useState(false);
   const [showSlip, setShowSlip] = useState(false);
@@ -45,20 +53,56 @@ const DefaultSlip = ({
     }
   };
 
-  // Handle subject changes
+  // UPDATED: Handle subject changes with static data persistence
   const handleSubjectChange = (index, field, value) => {
+    const subject = editableData.subjects[index];
     const updatedSubjects = [...editableData.subjects];
     updatedSubjects[index][field] = value;
     setEditableData({ ...editableData, subjects: updatedSubjects });
+
+    // If date or timing is changed, update static data
+    if (field === "date" || field === "timing") {
+      updateSubjectDateTime(
+        subject.id,
+        field === "date" ? value : subject.date,
+        field === "timing" ? value : subject.timing
+      );
+    }
   };
 
-  // Handle subject name change
+  // Handle subject name change - update in both editableData and excelData
   const handleSubjectNameChange = (index, newSubjectName) => {
+    const oldSubjectName = editableData.subjects[index].subject;
+
+    // Update in master subjects (editableData)
     const updatedSubjects = [...editableData.subjects];
     updatedSubjects[index].subject = newSubjectName;
     setEditableData({ ...editableData, subjects: updatedSubjects });
+
+    // Update in all students' data (excelData)
+    const updatedExcelData = [...excelData];
+    updatedExcelData[0].data = updatedExcelData[0].data.map((student) => {
+      const updatedStudentSubjects = student.subjects.map((subj) => {
+        if (typeof subj === "object" && subj.subject === oldSubjectName) {
+          return {
+            ...subj,
+            subject: newSubjectName,
+          };
+        }
+        return subj;
+      });
+
+      return {
+        ...student,
+        subjects: updatedStudentSubjects,
+      };
+    });
+
+    // Update the context with the modified excelData
+    setExcelData(updatedExcelData);
   };
 
+  // UPDATED: Add new row with static data initialization
   const addNewRow = () => {
     const newRow = {
       id: `new-${Date.now()}`,
@@ -68,6 +112,9 @@ const DefaultSlip = ({
     };
     const updated = [...editableData.subjects, newRow];
     setEditableData({ ...editableData, subjects: updated });
+
+    // Initialize static data for the new subject
+    updateSubjectDateTime(newRow.id, newRow.date, newRow.timing);
   };
 
   const deleteRow = (index) => {
@@ -442,19 +489,6 @@ const DefaultSlip = ({
                                       e.target.value
                                     )
                                   }
-                                />
-                                <FiTrash2
-                                  onClick={() => deleteRow(index)}
-                                  style={{
-                                    cursor: "pointer",
-                                    color: "red",
-                                    marginLeft: "8px",
-                                    position: "absolute",
-                                    right: "5px",
-                                    top: "50%",
-                                    transform: "translateY(-50%)",
-                                  }}
-                                  title="Delete this subject"
                                 />
                               </td>
                             </tr>

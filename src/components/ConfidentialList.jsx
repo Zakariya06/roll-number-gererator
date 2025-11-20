@@ -59,7 +59,8 @@ function ConfidentialList() {
                 <div className="titleSection">
                   <h1 className="universityTitle">Khyber Medical University</h1>
                   <p className="programTitle">
-                    Regional Exam Cell - {excelData[0]?.regionalExamCell}
+                    Regional Exam Cell -{" "}
+                    {editableData.region}
                   </p>
                   <p className="semesterTitle"> Confidential List with Pic</p>
                 </div>

@@ -1,10 +1,11 @@
 import ihslogo from "../assets/kmu_ihs_logo.png";
 import signature from "../assets/signature.png";
 import logo from "../assets/khyber_medical_university_logo.jpeg";
-import { useSheetContext } from "../context/sheetData";
+import { useSheetContext } from "../context/sheetData"; 
 
 const StaticSlip = () => {
   const { excelData, editableData } = useSheetContext();
+
   return (
     <div className="admitCardContainer">
       <div className="mainBorder">
@@ -31,8 +32,7 @@ const StaticSlip = () => {
           <div className="titleSection">
             <h1 className="universityTitle">Khyber Medical University</h1>
             <p className="programTitle">
-              Regional Exam Cell -{" "}
-              {excelData[0]?.regionalExamCell && excelData[0]?.regionalExamCell}
+              Regional Exam Cell - {editableData.region}
             </p>
             <input
               type="text"
@@ -132,7 +132,7 @@ const StaticSlip = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {editableData.subjects.map((sub, i) => (
+                      {editableData?.subjects?.map((sub, i) => (
                         <tr key={i} className="tableRow">
                           <td className="tableCell" style={{ width: "40px" }}>
                             {i + 1}

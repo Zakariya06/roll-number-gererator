@@ -287,7 +287,7 @@ export default function RollNumberSlip() {
                       Khyber Medical University
                     </h1>
                     <p className="programTitle">
-                      Regional Exam Cell - {excelData[0]?.regionalExamCell}
+                      Regional Exam Cell - {editableData.region}
                     </p>
                     <p className="semesterTitle">
                       {editableData.semesterTitle ||
@@ -381,9 +381,28 @@ export default function RollNumberSlip() {
                                     <td className="tableCell text-start">
                                       {sub.subject}
                                     </td>
-                                    <td className="tableCell">{sub.date}</td>
+                                    <td className="tableCell">
+                                      {" "}
+                                      {
+                                        editableData.subjects.find(
+                                          (subject) =>
+                                            subject.subject
+                                              .toLowerCase()
+                                              .trim() ===
+                                            sub.subject.toLowerCase().trim()
+                                        )?.date
+                                      }
+                                    </td>
                                     <td className="tableCell deleteRowCell">
-                                      {sub.timing}
+                                      {
+                                        editableData.subjects.find(
+                                          (subject) =>
+                                            subject.subject
+                                              .toLowerCase()
+                                              .trim() ===
+                                            sub.subject.toLowerCase().trim()
+                                        )?.timing
+                                      }
                                     </td>
                                   </tr>
                                 ))}

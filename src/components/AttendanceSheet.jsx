@@ -137,7 +137,7 @@ function AttendanceSheet({ selectedAtStatus }) {
                           Khyber Medical University
                         </h1>
                         <p className="programTitle">
-                          Regional - {excelData[0]?.regionalExamCell}
+                          Region - {editableData.region}
                         </p>
                         <p className="bsnText mb-0">
                           {editableData.semesterTitle}
