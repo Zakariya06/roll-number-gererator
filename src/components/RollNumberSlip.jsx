@@ -28,6 +28,9 @@ export default function RollNumberSlip() {
 
   const navigate = useNavigate();
 
+  console.log("this is edtable data", editableData);
+  console.log("this is excel data", excelData);
+
   // download Roll Number in pdf
   const downloadPDF = async (target) => {
     let handle = null;
@@ -37,12 +40,12 @@ export default function RollNumberSlip() {
       try {
         const suggestedName =
           target === "attendanceSheetContainer"
-            ? `${excelData[0]?.instituteName || ""} Attendance Sheet.pdf`
+            ? `${excelData[0]?.instituteName || ""} AS.pdf`
             : target === "confidentialListContainer"
-            ? `${excelData[0]?.instituteName || ""} Confidential List.pdf`
+            ? `${excelData[0]?.instituteName || ""} CL.pdf`
             : target === "reappearStudentData"
             ? `${excelData[0]?.instituteName || ""} Re-appear Data Students.pdf`
-            : `${excelData[0]?.instituteName || ""} Roll Number.pdf`;
+            : `${excelData[0]?.instituteName || ""} RN.pdf`;
 
         handle = await window.showSaveFilePicker({
           suggestedName,
@@ -126,7 +129,7 @@ export default function RollNumberSlip() {
       rollStart: editableData.rollNumber,
       institue: excelData[0]?.instituteName || "",
       exam: editableData.semesterTitle,
-      fileName: `${excelData[0]?.instituteName || ""}ospe list.xlsx`,
+      fileName: `${excelData[0]?.instituteName || ""} Sign OSPE list.xlsx`,
     });
   };
 
@@ -146,7 +149,7 @@ export default function RollNumberSlip() {
         institue: editableData.institute,
         exam: editableData.semesterTitle,
         station: selectedStation,
-        fileName: `${excelData[0]?.instituteName || ""} Students Stations.xlsx`,
+        fileName: `${excelData[0]?.instituteName || ""} OSPE List.xlsx`,
       });
       setStationModal(false);
       setSelectedStation(null);
@@ -351,9 +354,9 @@ export default function RollNumberSlip() {
                           <table className="examTable">
                             <colgroup>
                               <col width={"5%"} />
-                              <col width={"45%"} />
+                              <col width={"40%"} />
                               <col width={"20%"} />
-                              <col width={"30%"} />
+                              <col width={"35%"} />
                             </colgroup>
                             <thead>
                               <tr className="tableHeader">
@@ -367,7 +370,7 @@ export default function RollNumberSlip() {
                             </thead>
                             <tbody>
                               <>
-                                {row.subjects.map((sub, i) => (
+                                {editableData.subjects.map((sub, i) => (
                                   <tr key={i} className="tableRow">
                                     <td
                                       className="tableCell"
@@ -376,23 +379,11 @@ export default function RollNumberSlip() {
                                       {i + 1}
                                     </td>
                                     <td className="tableCell text-start">
-                                      {sub}
+                                      {sub.subject}
                                     </td>
-                                    <td className="tableCell">
-                                      {editableData.subjects.find(
-                                        (subject) =>
-                                          subject.subject
-                                            .toLowerCase()
-                                            .trim() === sub.toLowerCase().trim()
-                                      )?.date || "6-Jan-25"}
-                                    </td>
+                                    <td className="tableCell">{sub.date}</td>
                                     <td className="tableCell deleteRowCell">
-                                      {editableData.subjects.find(
-                                        (subject) =>
-                                          subject.subject
-                                            .toLowerCase()
-                                            .trim() === sub.toLowerCase().trim()
-                                      )?.timing || "9:30 am to 12:30 pm"}
+                                      {sub.timing}
                                     </td>
                                   </tr>
                                 ))}

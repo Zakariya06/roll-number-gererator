@@ -203,6 +203,50 @@ function ConfidentialList() {
           border-collapse: collapse;
           margin-top: 20px;
         } 
+
+        .tableHeaderCell {
+          vertical-align: middle;
+          text-align: center;
+          font-weight: bold;
+          border: 1px solid #000 !important; /* Ensure borders are black */
+          padding: 8px;
+        }
+
+        .tableBody .tableRow:nth-child(even) {
+          background-color: #f2f2f2; /* Light grey for even rows */
+        }
+
+        .tableCell {
+          border: 1px solid #000 !important; /* Ensure borders are black */
+          padding: 8px;
+          text-align: left;
+          vertical-align: middle;
+        }
+
+        .signatureCell {
+          min-width: 150px; /* Provide space for signatures */
+          text-align: left;
+        }
+
+        .footerSection {
+          padding-top: 20px;
+          border-top: 2px solid #000;
+        }
+
+        .signatureBlock {
+          flex: 1;
+          padding: 0 20px;
+        }
+
+        .signatureLabel {
+          font-weight: bold;
+          font-size: 1.1rem;
+        } 
+        .signatureLine {
+          border-bottom: 1px solid #000;
+          margin-top: 30px; /* Space for signature */
+          width: 80%; /* Adjust line length */
+        }
  
       `}</style>
     </>

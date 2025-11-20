@@ -390,6 +390,10 @@ input:disabled:hover {
 .generateButton:hover {
   background: #dc2626;
 }
+.generateButton:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
 
 .edit-icon:hover {
   color: #007bff !important;
