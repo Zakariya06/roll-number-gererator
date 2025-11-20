@@ -96,7 +96,7 @@ function AttendanceSheet({ selectedAtStatus }) {
                           {editableData.semesterTitle}
                         </p>
                         <p className="semesterTitle">ATTENDANCE SHEET</p>
-                        {selectedAtStatus === "Paper Code" && (
+                        {selectedAtStatus === "Circuit" && (
                           <p className="semesterTitle">
                             Computer Base Examination
                           </p>
